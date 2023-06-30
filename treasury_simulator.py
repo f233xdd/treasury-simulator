@@ -1,4 +1,3 @@
-import re
 import sys
 import random
 from typing import List
@@ -8,7 +7,7 @@ debug = True
 # and the true password will be shown at the beginning
 
 
-def create_password(length=7) -> List[int]:
+def create_password(length) -> List[int]:
     passwd = []
 
     for _ in range(length):
@@ -22,8 +21,7 @@ def create_password(length=7) -> List[int]:
     return passwd
 
 
-def get_input(true_password, msg) -> str:
-    length = len(true_password)
+def get_input(length, msg) -> str:
 
     while True:
         input_password = input(f'[ {length}|{msg} ]> ')
@@ -37,7 +35,7 @@ def get_input(true_password, msg) -> str:
             else:
                 print(f"Length is {length}!")
                 print('\n', end='')
-                return get_input(true_password, msg)
+                return get_input(length, msg)
 
         except ValueError:
             print("Your input is not numbers!")
@@ -45,15 +43,14 @@ def get_input(true_password, msg) -> str:
 
 
 def infer_input_password(true_password, input_password) -> tuple[list[bool | str], list[int]]:
-    length = len(true_password)
-    sorted_input = re.findall(r'\d', input_password)
+    sorted_input = list(input_password)
     sorted_int_input = [int(i) for i in sorted_input]
     output = []
 
-    for i in range(length):
-        if sorted_int_input[i] == true_password[i]:
+    for i, j in zip(sorted_int_input, true_password):
+        if i == j:
             output.append(True)
-        elif sorted_int_input[i] in true_password:
+        elif i in true_password:
             output.append('wow')
         else:
             output.append(False)
@@ -63,9 +60,10 @@ def infer_input_password(true_password, input_password) -> tuple[list[bool | str
 
 def main(try_times=5, len_of_passwd=7) -> int:
     true_password = create_password(len_of_passwd)
+    is_print = False
 
     for i in range(try_times):
-        input_password = get_input(true_password, (try_times-i))
+        input_password = get_input(len_of_passwd, (try_times - i))
         infer, sorted_int_input = infer_input_password(true_password, input_password)
         correct_numbers = infer.count(True)
 
@@ -82,9 +80,11 @@ def main(try_times=5, len_of_passwd=7) -> int:
             print('\n', end='')
             print("The case is unlocked!")
             print('\n', end='')
+            is_print = True
             break
 
-    print("The case is locked forever!")
+    if not is_print:
+        print("The case is locked forever!")
 
     return 0
 
