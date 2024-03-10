@@ -1,3 +1,6 @@
+"""
+parts that runs a game. 
+"""
 import random
 
 
@@ -11,8 +14,10 @@ class LockBox:
     def __init__(self, figure: int) -> None:
         self.__figure = figure
         self.__passport = [random.randint(0, 9) for __ in range(self.__figure)]
+        # create real password
     
     def match(self, pwd: list) -> list[bool | int]:
+        """match input password with real one"""
         res = []
         if len(pwd) == self.__figure:
             for i in range(self.__figure):
@@ -33,16 +38,19 @@ class InteractManager:
         self.__figure = figure
         self.__times = times
 
-    def output(self, msg) -> None:
+    @staticmethod
+    def output(msg) -> None:
+        """print msg on console"""
         print("".join(['\n', msg, '\n']))
-    
+
     def input(self) -> list[int]:
+        """get data from user"""
         while True:
             ipt = input(f"[{self.__figure}|{self.__times}]> ")
             try:
                 if len(ipt) == self.__figure:
                     self.__times += -1
-                    return [int(i) for i in ipt]
+                    return [int(i) for i in ipt]  # change password type from str to int
                 else:
                     self.output(f"Length is {self.__figure}!")
             except ValueError:
@@ -50,6 +58,7 @@ class InteractManager:
 
 
 def formatter(res: list[bool | int], ipt: list[int]) -> str:
+    """change result list into readable string"""
     s = ""
     for i in range(len(res)):
         if res[i] is True:
@@ -68,16 +77,14 @@ class Engine:
         self.__times = times
 
     def main(self) -> None:
-        if debug:
-            print(self.__lockbox.passport)
-            
+        """start the game"""
+        if debug: print(self.__lockbox.passport)  # for debug
+  
         for __ in range(self.__times):
             ipt = self.__console.input()
             res = self.__lockbox.match(ipt)
-            
             s = formatter(res, ipt)
             self.__console.output(s)
-            
             if all(res):
                 self.__console.output("You win.")
                 break

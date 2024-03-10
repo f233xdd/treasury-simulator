@@ -2,7 +2,7 @@ import core
 
 
 if __name__ == "__main__":
-    game = core.Engine(7, 9)
+    game = core.Engine(7, 7)
     try:
         game.main()
     except KeyboardInterrupt:
